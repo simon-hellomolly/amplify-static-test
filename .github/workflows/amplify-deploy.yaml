@@ -23,6 +23,13 @@ jobs:
       - name: Install Amplify CLI
         run: npm install -g @aws-amplify/cli
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # Ensure this matches your project's region
+
       - name: Install or Update AWS CLI
         run: |
           if [ -d "/usr/local/aws-cli/v2/current" ]; then
@@ -43,32 +50,9 @@ jobs:
           --appId d2dnxuxumrfcxb \
           --envName static \
           --yes
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "your-aws-region" # replace with your AWS region
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Amplify Init (Headless)
-        run: |
-          amplify init --amplify ${{ toJSON(steps.load-config.outputs.amplify-config) }} --yes
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"
 
       - name: Amplify Push
         run: amplify push --yes
 
-      # Load the Amplify configuration from a file (amplify-init-config.json)
-      - name: Load Amplify Config
-        id: load-config
-        run: echo "::set-output name=amplify-config::$(jq -c . amplify-init-config.json)"
-
+      # Remove the amplify init and load config steps if they are not necessary
       # Add additional steps as needed
