@@ -47,12 +47,15 @@ jobs:
       - name: Amplify Pull (Headless)
         run: |
           amplify pull \
-          --appId d2dnxuxumrfcxb \
-          --envName static \
+          --appId d3ss9pq6bcenn \
+          --envName dev \
           --yes
 
       - name: Amplify Push
         run: amplify push --yes
+
+      - name: Amplify Publish
+        run: amplify publish --yes
 
       # Remove the amplify init and load config steps if they are not necessary
       # Add additional steps as needed
